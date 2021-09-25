@@ -3,4 +3,4 @@ project(lab_02_24)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(lab_02_24 src/main.cpp)
+add_executable(lab_02_24 src/main.cpp src/WordCallbackReader/WordCallbackReader.cpp src/WordCallbackReader/WordCallbackReader.h)
