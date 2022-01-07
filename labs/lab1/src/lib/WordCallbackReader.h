@@ -33,12 +33,36 @@ public:
 					if (!word.addChar(ch)) return false;
 				}
 
-				if (ch == ' ')
+				if (ch == ' ' || ch == '\n')
 				{
 					callback(word);
 					word.clear();
 					state = ReadState::STATE_WAIT_FOR_WORD;
 				}
+
+				if (ch == '-')
+				{
+					state = ReadState::WORD_SPLIT;
+				}
+				break;
+			case ReadState::WORD_SPLIT:
+				if (ch == '\n')
+				{
+					state = ReadState::STATE_READ_WORD;
+					break;
+				}
+
+				if (std::isalpha(ch))
+				{
+					state = ReadState::STATE_READ_WORD;
+					if (!word.addChar(ch)) return false;
+					break;
+				}
+
+				callback(word);
+				word.clear();
+				state = ReadState::STATE_WAIT_FOR_WORD;
+				if (!word.addChar(ch)) return false;
 				break;
 			}
 		}
@@ -59,7 +83,8 @@ private:
 	enum class ReadState
 	{
 		STATE_WAIT_FOR_WORD,
-		STATE_READ_WORD
+		STATE_READ_WORD,
+		WORD_SPLIT
 	};
 };
 

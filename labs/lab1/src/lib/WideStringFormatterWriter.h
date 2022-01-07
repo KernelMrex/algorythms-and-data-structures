@@ -41,7 +41,7 @@ public:
 					m_out << ' ';
 				}
 
-				if (biggerSpacesAmount >= 0)
+				if (biggerSpacesAmount > 0)
 				{
 					m_out << ' ';
 					biggerSpacesAmount--;

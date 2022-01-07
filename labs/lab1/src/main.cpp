@@ -41,7 +41,6 @@ int main(int argc, char** argv)
 	unsigned long charsAmount = 0;
 
 	// TODO: annotated errors on input/output
-	// TODO: fix words recognizing
 	bool readOk = wordCallbackReader.readAllWithCallback([&words, &wideStringFormatter, &charsAmount, maxStringSize](const String& word) {
 		charsAmount += word.getSize() + 1;
 		if (charsAmount - 1 > maxStringSize)
