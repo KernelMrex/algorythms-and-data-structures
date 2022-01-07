@@ -1,19 +1,21 @@
-#ifndef WIDESTRINGFORMATTERWRITER_H
-#define WIDESTRINGFORMATTERWRITER_H
+#ifndef STRINGWIDEFORMATWRITER_H
+#define STRINGWIDEFORMATWRITER_H
 
-#include "String.h"
 #include <ostream>
 
-class WideStringFormatter final
+#include "String.h"
+#include "StringWriter.h"
+
+class StringWideFormatWriter final : public StringWriter
 {
 public:
-	explicit WideStringFormatter(std::ostream& out, unsigned long stringWidth)
-		: m_out(out)
+	explicit StringWideFormatWriter(std::ostream& out, unsigned long stringWidth)
+		: StringWriter(out)
 		, m_stringWidth(stringWidth)
 	{
 	}
 
-	void write(const Vector<String>& words)
+	bool write(const Vector<String>& words) final
 	{
 		unsigned long wordsAmount = words.getSize();
 		unsigned long spacesAmount = wordsAmount - 1;
@@ -32,18 +34,18 @@ public:
 
 		for (unsigned long i = 0; i < wordsAmount; ++i)
 		{
-			m_out << words.get(i);
+			if (!(m_out << words.get(i))) return false;
 
 			if (spacesAmount > 0)
 			{
 				for (int j = 0; j < defaultWordSpacing; ++j)
 				{
-					m_out << ' ';
+					if (!(m_out << ' ')) return false;
 				}
 
 				if (biggerSpacesAmount > 0)
 				{
-					m_out << ' ';
+					if (!(m_out << ' ')) return false;
 					biggerSpacesAmount--;
 				}
 
@@ -51,11 +53,10 @@ public:
 			}
 		}
 
-		m_out << std::endl;
+		return (m_out << std::endl).good();
 	}
 
 private:
-	std::ostream& m_out;
 	unsigned long m_stringWidth;
 };
 

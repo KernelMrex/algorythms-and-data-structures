@@ -1,11 +1,11 @@
+#include <fstream>
 #include <iostream>
 #include <optional>
-#include <fstream>
 
 #include "lib/Args.h"
 #include "lib/Vector.h"
+#include "lib/StringWideFormatWriter.h"
 #include "lib/WordCallbackReader.h"
-#include "lib/WideStringFormatterWriter.h"
 
 int main(int argc, char** argv)
 {
@@ -34,42 +34,37 @@ int main(int argc, char** argv)
 
 	unsigned long maxStringSize = 40;
 
-	WideStringFormatter wideStringFormatter(outputFileStream, maxStringSize);
-	Vector<String> words;
-
 	WordCallbackReader wordCallbackReader(inputFileStream >> std::noskipws);
+	Vector<String> words;
+	StringWideFormatWriter wideFormatWriter(outputFileStream, maxStringSize);
 	unsigned long charsAmount = 0;
 
-	// TODO: annotated errors on input/output
-	bool readOk = wordCallbackReader.readAllWithCallback([&words, &wideStringFormatter, &charsAmount, maxStringSize](const String& word) {
+	bool ioOk = wordCallbackReader.readAllWithCallback([&words, &wideFormatWriter, &charsAmount, maxStringSize](const String& word) {
 		charsAmount += word.getSize() + 1;
 		if (charsAmount - 1 > maxStringSize)
 		{
-			wideStringFormatter.write(words.popSlice(0, words.getSize()));
+			bool writeOk = wideFormatWriter.write(words.popSlice(0, words.getSize()));
+			if (!writeOk)
+				return false;
 			charsAmount = word.getSize() + 1;
 		}
 		words.push(word);
+		return true;
 	});
-	if (!readOk)
+	if (ioOk)
 	{
-		std::cerr << "Error while reading file " << args->getInputFilePath() << std::endl;
+		StringWriter writer(outputFileStream);
+		ioOk = writer.write(words);
+	}
+
+	if (!ioOk)
+	{
+		std::cerr << "Error while performing reading or writing to files: "
+				  << args->getInputFilePath() << ' ' << args->getOutputFilePath()
+				  << std::endl;
 		return 1;
 	}
 
-	bool isFirstWord = true;
-	for (int i = 0; i < words.getSize(); ++i)
-	{
-		if (!isFirstWord)
-		{
-			outputFileStream << ' ';
-		}
-		else
-		{
-			isFirstWord = false;
-		}
-
-		outputFileStream << words.get(i);
-	}
-
 	std::cout << "Successfully formatted! " << std::endl;
+	return 0;
 }

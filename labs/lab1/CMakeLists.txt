@@ -7,11 +7,11 @@ add_executable(
         lab1
         src/main.cpp
         src/lib/WordCallbackReader.h
-        src/lib/WideStringFormatterWriter.h
+        src/lib/StringWideFormatWriter.h
         src/lib/Args.h
         src/lib/String.h
         src/lib/Vector.h
-)
+        src/lib/StringWriter.h)
 
 add_executable(
         lab1_tests

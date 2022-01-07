@@ -2,6 +2,7 @@
 #define WORDCALLBACKFILEREADER_H
 
 #include "String.h"
+
 #include <functional>
 #include <iostream>
 
@@ -11,7 +12,7 @@ public:
 	explicit WordCallbackReader(std::istream& inputStream)
 		: in(inputStream){};
 
-	bool readAllWithCallback(const std::function<void(const String& word)>& callback)
+	bool readAllWithCallback(const std::function<bool(const String& word)>& callback)
 	{
 		String word;
 		ReadState state = ReadState::STATE_WAIT_FOR_WORD;
@@ -24,18 +25,21 @@ public:
 				if (std::isalpha(ch))
 				{
 					state = ReadState::STATE_READ_WORD;
-					if (!word.addChar(ch)) return false;
+					if (!word.addChar(ch))
+						return false;
 				}
 				break;
 			case ReadState::STATE_READ_WORD:
 				if (std::isalpha(ch) || ch == '.' || ch == ',' || ch == '?' || ch == '!')
 				{
-					if (!word.addChar(ch)) return false;
+					if (!word.addChar(ch))
+						return false;
 				}
 
 				if (ch == ' ' || ch == '\n')
 				{
-					callback(word);
+					if (!callback(word))
+						return false;
 					word.clear();
 					state = ReadState::STATE_WAIT_FOR_WORD;
 				}
@@ -55,14 +59,17 @@ public:
 				if (std::isalpha(ch))
 				{
 					state = ReadState::STATE_READ_WORD;
-					if (!word.addChar(ch)) return false;
+					if (!word.addChar(ch))
+						return false;
 					break;
 				}
 
-				callback(word);
+				if (!callback(word))
+					return false;
 				word.clear();
 				state = ReadState::STATE_WAIT_FOR_WORD;
-				if (!word.addChar(ch)) return false;
+				if (!word.addChar(ch))
+					return false;
 				break;
 			}
 		}
@@ -72,7 +79,8 @@ public:
 			return false;
 		}
 
-		callback(word);
+		if (!callback(word))
+			return false;
 
 		return true;
 	};
