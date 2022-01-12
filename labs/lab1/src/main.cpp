@@ -12,7 +12,7 @@ int main(int argc, char** argv)
 	auto args = Args::parseFromCLI(argc, argv);
 	if (!args.has_value())
 	{
-		std::cout << "Invalid args count. Usage lab1.out <input file> <output file>" << std::endl;
+		std::cout << "Invalid args. Usage lab1.out <input file> <output file> <string size>" << std::endl;
 		return 1;
 	}
 
@@ -32,7 +32,7 @@ int main(int argc, char** argv)
 		return 1;
 	}
 
-	unsigned long maxStringSize = 40;
+	unsigned long maxStringSize = args->getStringSize();
 
 	WordCallbackReader wordCallbackReader(inputFileStream >> std::noskipws);
 	Vector<String> words;
