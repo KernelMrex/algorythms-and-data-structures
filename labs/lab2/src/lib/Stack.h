@@ -46,7 +46,6 @@ public:
 
 	~Stack() = default;
 
-	[[nodiscard]]
 	T pop()
 	{
 		if (m_tail == nullptr)
@@ -54,19 +53,27 @@ public:
 			throw std::runtime_error("stack is empty");
 		}
 
-		auto extractedNode = m_tail;
-		if (m_tail->getNext() != nullptr)
+		auto extractedNode = std::move(m_tail);
+		if (extractedNode->getNext() != nullptr)
 		{
-			m_tail = m_tail->getNext();
+			m_tail = extractedNode->getNext();
 		}
 		else
 		{
-			m_tail == nullptr;
+			m_tail = nullptr;
 		}
 
-		auto extractedValue = extractedNode->getValue();
+		return extractedNode->getValue();
+	}
 
-		return extractedValue;
+	[[nodiscard]]
+	T viewTop() const
+	{
+		if (m_tail == nullptr)
+		{
+			throw std::runtime_error("stack is empty");
+		}
+		return m_tail->getValue();
 	}
 
 	void push(T value)
@@ -76,7 +83,9 @@ public:
 			m_tail = std::make_shared<StackNode>(value);
 			return;
 		}
-		m_tail->setNext(std::make_shared<StackNode>(value));
+		auto next = std::move(m_tail);
+		m_tail = std::make_shared<StackNode>(value);
+		m_tail->setNext(next);
 	}
 
 	[[nodiscard]]

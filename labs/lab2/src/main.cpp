@@ -3,18 +3,20 @@
 #include "lib/State.h"
 #include "lib/Stack.h"
 #include "lib/KeyWord.h"
+#include "lib/PascalSyntaxAnalyzer.h"
 
 std::optional<KeyWord> mapStringToKeyWord(const std::string& string);
 
+// TODO: refactor code
 int main()
 {
 	char ch;
 	std::string buff;
 	State state = State::READING;
 	bool isLoop = true;
+	PascalSyntaxAnalyzer analyzer;
 
-	Stack<KeyWord> stack;
-
+	bool wasSemicolon = false;
 	while (isLoop)
 	{
 		switch (state)
@@ -31,7 +33,7 @@ int main()
 				state = State::WORD;
 				break;
 			}
-			else if (ch == ';' || ch == ' ' || ch == '\n')
+			else if (ch == ';' || ch == ' ' || ch == '\n' || ch == '.')
 			{
 				state = State::SEPARATOR;
 				break;
@@ -47,10 +49,26 @@ int main()
 				auto keyword = mapStringToKeyWord(buff);
 				if (keyword.has_value())
 				{
-					stack.push(keyword.value());
+					analyzer.addWord(keyword.value());
 				}
 				buff.clear();
 			}
+
+			if (ch == ';')
+			{
+				analyzer.addSeparator(PascalSeparator::SEMICOLON);
+			}
+			else if (ch == '.')
+			{
+				analyzer.addSeparator(PascalSeparator::DOT);
+			}
+
+			if (analyzer.isError())
+			{
+				std::cout << "Error in syntax!" << std::endl;
+				return EXIT_FAILURE;
+			}
+
 			state = State::READING;
 			break;
 		case State::FINAL:
@@ -58,6 +76,9 @@ int main()
 			break;
 		}
 	}
+
+	std::cout << "Syntax check successful" << std::endl;
+	return EXIT_SUCCESS;
 }
 
 std::optional<KeyWord> mapStringToKeyWord(const std::string& string)

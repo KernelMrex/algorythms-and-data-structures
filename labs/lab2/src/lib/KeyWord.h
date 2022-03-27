@@ -10,7 +10,8 @@ enum class KeyWord
 	ELSE,
 	BEGIN,
 	END,
-	RECORD
+	RECORD,
+	IF_THEN
 };
 
 #endif // KEYWORD_H

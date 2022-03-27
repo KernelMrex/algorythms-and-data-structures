@@ -13,4 +13,6 @@ add_executable(
         src/lib/Stack.h
         src/lib/State.h
         src/lib/KeyWord.h
+        src/lib/PascalSyntaxAnalyzer.h
+        src/lib/PascalSeparator.h
 )
