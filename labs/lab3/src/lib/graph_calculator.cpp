@@ -1,5 +1,3 @@
-#include <iostream>
-#include <iomanip>
 #include "graph_calculator.h"
 #include "SquareMatrix.h"
 
