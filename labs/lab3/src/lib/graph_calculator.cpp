@@ -117,7 +117,7 @@ std::vector<int> getDistancesToVertecies(const SquareMatrix<int>& matrix, int fr
 	}
 	while (minIndex != MAX_INT);
 
-	return std::move(weights);
+	return weights;
 }
 
 
