@@ -7,7 +7,8 @@
 
 std::optional<KeyWord> mapStringToKeyWord(const std::string& string);
 
-// TODO: refactor code
+// TODO: добавить вывод строки ошибки
+// TODO: Вложенные IF-ы работают некорретно
 int main()
 {
 	char ch;
