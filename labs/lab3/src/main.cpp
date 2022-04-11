@@ -1,12 +1,13 @@
 #include <iostream>
-#include <vector>
-#include "lib/graph_calculator.h"
+#include <set>
+#include "lib/WeightedGraph.h"
+#include "lib/graph_utils.h"
 
 constexpr int MAX_GRAPH_SIZE = 10000;
 
 int main()
 {
-	std::vector<GraphEdge> graphEdges;
+	WeightedGraph<int, int> graph;
 
 	int amountVertexes;
 	std::cin >> amountVertexes;
@@ -15,7 +16,8 @@ int main()
 	for (int i = 0; i < (amountVertexes - 1) && std::cin; i++)
 	{
 		std::cin >> fromVertex >> toVertex;
-		graphEdges.emplace_back(fromVertex - 1, toVertex - 1);
+		graph.AddEdge(fromVertex, toVertex, 1);
+		graph.AddEdge(toVertex, fromVertex, 1);
 	}
 
 	if (!std::cin.eof() && std::cin.fail())
@@ -24,11 +26,12 @@ int main()
 		return EXIT_FAILURE;
 	}
 
-	auto centersOfGravity = calculateGraphCenterOfGravity(graphEdges);
+	auto centersOfGravity = calculateGraphCenterOfGravity(graph);
 	std::cout << centersOfGravity.size() << std::endl;
-	for (auto centerOfGravity : centersOfGravity)
+	auto res = std::set(centersOfGravity.begin(), centersOfGravity.end());
+	for (auto centerOfGravity : res)
 	{
-		std::cout << centerOfGravity + 1 << ' ';
+		std::cout << centerOfGravity << ' ';
 	}
-	std::cout << std::endl;
+	return EXIT_SUCCESS;
 }

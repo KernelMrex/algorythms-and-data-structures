@@ -12,5 +12,15 @@ add_executable(
         src/main.cpp
         src/lib/graph_calculator.h
         src/lib/graph_calculator.cpp
-        src/lib/SquareMatrix.h
+        src/lib/WeightedGraph.h
+        src/lib/graph_utils.h
+)
+
+add_executable(
+        lab3_tests
+        src/lib/WeightedGraph.h
+        src/lib/graph_utils.h
+        test/unit/catch_main.cpp
+        test/unit/lib/graph_utils_test.cpp
+        test/unit/lib/WeightedGraphTest.cpp
 )
