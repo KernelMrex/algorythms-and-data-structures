@@ -65,6 +65,15 @@ public:
 			m_stack.pop();
 			break;
 		case KeyWord::END:
+			if (prev == KeyWord::IF_THEN)
+			{
+				while (prev == KeyWord::IF_THEN)
+				{
+					prev = m_stack.pop();
+				}
+				m_stack.push(prev);
+			}
+
 			if (prev != KeyWord::BEGIN && prev != KeyWord::RECORD)
 			{
 				m_isError = true;
@@ -107,15 +116,25 @@ public:
 		switch (separator)
 		{
 		case PascalSeparator::SEMICOLON:
-			if (prev == KeyWord::IF_THEN)
+			if (prev == KeyWord::IF_THEN || prev == KeyWord::ELSE)
 			{
-				m_stack.pop();
+				while (prev == KeyWord::IF_THEN || prev == KeyWord::ELSE)
+				{
+					prev = m_stack.pop();
+				}
+				m_stack.push(prev);
 			}
 			break;
 		case PascalSeparator::DOT:
 			m_isEndingSeparatorMet = true;
 			break;
 		}
+	}
+
+	[[nodiscard]]
+	bool isEnded()
+	{
+		return m_stack.isEmpty();
 	}
 
 	[[nodiscard]]

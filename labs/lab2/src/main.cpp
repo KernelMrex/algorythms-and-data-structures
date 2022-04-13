@@ -1,14 +1,11 @@
 #include <iostream>
 #include <optional>
 #include "lib/State.h"
-#include "lib/Stack.h"
 #include "lib/KeyWord.h"
 #include "lib/PascalSyntaxAnalyzer.h"
 
 std::optional<KeyWord> mapStringToKeyWord(const std::string& string);
 
-// TODO: добавить вывод строки ошибки
-// TODO: Вложенные IF-ы работают некорретно
 int main()
 {
 	char ch;
@@ -16,8 +13,7 @@ int main()
 	State state = State::READING;
 	bool isLoop = true;
 	PascalSyntaxAnalyzer analyzer;
-
-	bool wasSemicolon = false;
+	int lineCounter = 1;
 	while (isLoop)
 	{
 		switch (state)
@@ -34,8 +30,14 @@ int main()
 				state = State::WORD;
 				break;
 			}
-			else if (ch == ';' || ch == ' ' || ch == '\n' || ch == '.')
+			else if (ch == ';' || ch == ' ' || ch == '.')
 			{
+				state = State::SEPARATOR;
+				break;
+			}
+			else if (ch == '\n')
+			{
+				lineCounter++;
 				state = State::SEPARATOR;
 				break;
 			}
@@ -66,7 +68,7 @@ int main()
 
 			if (analyzer.isError())
 			{
-				std::cout << "Error in syntax!" << std::endl;
+				std::cout << "Error in syntax! Line: " << lineCounter << std::endl;
 				return EXIT_FAILURE;
 			}
 
@@ -76,6 +78,12 @@ int main()
 			isLoop = false;
 			break;
 		}
+	}
+
+	if (!analyzer.isEnded())
+	{
+		std::cout << "Unexpected end of file! " << std::endl;
+		return EXIT_FAILURE;
 	}
 
 	std::cout << "Syntax check successful" << std::endl;
